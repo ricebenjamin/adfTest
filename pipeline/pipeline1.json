@@ -1,0 +1,600 @@
+{
+	"name": "pipeline1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy Accomplish",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzurePostgreSqlSource",
+						"partitionOption": "None",
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "AzurePostgreSqlSink",
+						"writeBatchSize": 1000000,
+						"writeBatchTimeout": "00:30:00",
+						"preCopyScript": "truncate table gaobi_edw.doc_db_accomplish;",
+						"writeMethod": "BulkInsert"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "accno",
+									"type": "String",
+									"physicalType": "character varying"
+								},
+								"sink": {
+									"name": "accno",
+									"type": "String",
+									"physicalType": "character varying"
+								}
+							},
+							{
+								"source": {
+									"name": "action",
+									"type": "String",
+									"physicalType": "character varying"
+								},
+								"sink": {
+									"name": "action",
+									"type": "String",
+									"physicalType": "character varying"
+								}
+							},
+							{
+								"source": {
+									"name": "apprdat",
+									"type": "DateTime",
+									"physicalType": "timestamp without time zone"
+								},
+								"sink": {
+									"name": "apprdat",
+									"type": "DateTime",
+									"physicalType": "timestamp without time zone"
+								}
+							},
+							{
+								"source": {
+									"name": "apprflg",
+									"type": "String",
+									"physicalType": "character varying"
+								},
+								"sink": {
+									"name": "apprflg",
+									"type": "String",
+									"physicalType": "character varying"
+								}
+							},
+							{
+								"source": {
+									"name": "budcur",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "budcur",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "budpri",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "budpri",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "ccosred",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "ccosred",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "cnonbud",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "cnonbud",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "collsav",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "collsav",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "crecsav",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "crecsav",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "crossrefno",
+									"type": "String",
+									"physicalType": "character varying"
+								},
+								"sink": {
+									"name": "crossrefno",
+									"type": "String",
+									"physicalType": "character varying"
+								}
+							},
+							{
+								"source": {
+									"name": "crossreftxt",
+									"type": "String",
+									"physicalType": "character varying"
+								},
+								"sink": {
+									"name": "crossreftxt",
+									"type": "String",
+									"physicalType": "character varying"
+								}
+							},
+							{
+								"source": {
+									"name": "fcosred",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "fcosred",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "fnonbud",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "fnonbud",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "frecsav",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "frecsav",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "frevinc",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "frevinc",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "measavf",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "measavf",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "measav1",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "measav1",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "measbud",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "measbud",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "nonmeas",
+									"type": "String",
+									"physicalType": "character"
+								},
+								"sink": {
+									"name": "nonmeas",
+									"type": "String",
+									"physicalType": "character"
+								}
+							},
+							{
+								"source": {
+									"name": "nonrsav",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "nonrsav",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "othcura",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "othcura",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "othcurb",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "othcurb",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "other",
+									"type": "String",
+									"physicalType": "character"
+								},
+								"sink": {
+									"name": "other",
+									"type": "String",
+									"physicalType": "character"
+								}
+							},
+							{
+								"source": {
+									"name": "othfutb",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "othfutb",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "othpria",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "othpria",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "recrsav",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "recrsav",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "savings",
+									"type": "String",
+									"physicalType": "character varying"
+								},
+								"sink": {
+									"name": "savings",
+									"type": "String",
+									"physicalType": "character varying"
+								}
+							},
+							{
+								"source": {
+									"name": "trbudg",
+									"type": "String",
+									"physicalType": "character varying"
+								},
+								"sink": {
+									"name": "trbudg",
+									"type": "String",
+									"physicalType": "character varying"
+								}
+							},
+							{
+								"source": {
+									"name": "opercosts",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "opercosts",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "multyrsales",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "multyrsales",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "entitle",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "entitle",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "othsave",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "othsave",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "fy",
+									"type": "Int32",
+									"physicalType": "integer"
+								},
+								"sink": {
+									"name": "fy",
+									"type": "Int32",
+									"physicalType": "integer"
+								}
+							},
+							{
+								"source": {
+									"name": "referencer",
+									"type": "String",
+									"physicalType": "character varying"
+								},
+								"sink": {
+									"name": "referencer",
+									"type": "String",
+									"physicalType": "character varying"
+								}
+							},
+							{
+								"source": {
+									"name": "contact",
+									"type": "String",
+									"physicalType": "character varying"
+								},
+								"sink": {
+									"name": "contact",
+									"type": "String",
+									"physicalType": "character varying"
+								}
+							},
+							{
+								"source": {
+									"name": "benefits",
+									"type": "String",
+									"physicalType": "character varying"
+								},
+								"sink": {
+									"name": "benefits",
+									"type": "String",
+									"physicalType": "character varying"
+								}
+							},
+							{
+								"source": {
+									"name": "focalpoint",
+									"type": "String",
+									"physicalType": "character varying"
+								},
+								"sink": {
+									"name": "focalpoint",
+									"type": "String",
+									"physicalType": "character varying"
+								}
+							},
+							{
+								"source": {
+									"name": "highrisk_code",
+									"type": "Int32",
+									"physicalType": "integer"
+								},
+								"sink": {
+									"name": "highrisk_code",
+									"type": "Int32",
+									"physicalType": "integer"
+								}
+							},
+							{
+								"source": {
+									"name": "highrisk_ind",
+									"type": "String",
+									"physicalType": "character varying"
+								},
+								"sink": {
+									"name": "highrisk_ind",
+									"type": "String",
+									"physicalType": "character varying"
+								}
+							},
+							{
+								"source": {
+									"name": "dof_fin_bene_amnt_num",
+									"type": "Int64",
+									"physicalType": "bigint"
+								},
+								"sink": {
+									"name": "dof_fin_bene_amnt_num",
+									"type": "Int64",
+									"physicalType": "bigint"
+								}
+							},
+							{
+								"source": {
+									"name": "dof_fin_bene_fy_start_num",
+									"type": "Int32",
+									"physicalType": "integer"
+								},
+								"sink": {
+									"name": "dof_fin_bene_fy_start_num",
+									"type": "Int32",
+									"physicalType": "integer"
+								}
+							},
+							{
+								"source": {
+									"name": "dof_fin_bene_fv_end_num",
+									"type": "Int32",
+									"physicalType": "integer"
+								},
+								"sink": {
+									"name": "dof_fin_bene_fv_end_num",
+									"type": "Int32",
+									"physicalType": "integer"
+								}
+							},
+							{
+								"source": {
+									"name": "dof_fin_bene_source_nm",
+									"type": "String",
+									"physicalType": "character varying"
+								},
+								"sink": {
+									"name": "dof_fin_bene_source_nm",
+									"type": "String",
+									"physicalType": "character varying"
+								}
+							},
+							{
+								"source": {
+									"name": "dof_fin_bene_comment_txt",
+									"type": "String",
+									"physicalType": "character varying"
+								},
+								"sink": {
+									"name": "dof_fin_bene_comment_txt",
+									"type": "String",
+									"physicalType": "character varying"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Accomplish_Source",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Accomplish_Target",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-08-18T02:11:38Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

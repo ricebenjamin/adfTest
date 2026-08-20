@@ -1,0 +1,28 @@
+{
+	"name": "r9-trial-ssis-ir",
+	"properties": {
+		"type": "Managed",
+		"description": "SSIS Integrated Runtime",
+		"typeProperties": {
+			"computeProperties": {
+				"location": "East US",
+				"nodeSize": "Standard_D2_v3",
+				"numberOfNodes": 1,
+				"maxParallelExecutionsPerNode": 1
+			},
+			"ssisProperties": {
+				"catalogInfo": {
+					"catalogServerEndpoint": "r9-trial-free-azure-db.database.windows.net",
+					"catalogAdminUserName": "CloudSAe0d670c9",
+					"catalogAdminPassword": {
+						"type": "SecureString",
+						"value": "**********"
+					},
+					"catalogPricingTier": "Basic"
+				},
+				"edition": "Standard",
+				"licenseType": "LicenseIncluded"
+			}
+		}
+	}
+}

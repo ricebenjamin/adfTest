@@ -1,0 +1,227 @@
+{
+	"name": "AFIT_ETL_Main",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get DataSource Info",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "GFMDRRS_DB__ETLManager",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"parameters": [
+								{
+									"name": "DatasrouceAbbrev",
+									"type": "String",
+									"value": {
+										"value": "@pipeline().parameters.DataSourceAbbrev",
+										"type": "Expression"
+									},
+									"direction": "Input"
+								}
+							],
+							"type": "Query",
+							"text": "exec SSIS.GetDataSourceInfo @DatasrouceAbbrev"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Log Job Start",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Get DataSource Info",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "GFMDRRS_DB__ETLManager",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"parameters": [
+								{
+									"name": "DataSourceID",
+									"type": "Guid",
+									"value": {
+										"value": "@activity('Get DataSource Info').output.resultSets[0].rows[0].DataSourceID",
+										"type": "Expression"
+									},
+									"direction": "Input"
+								},
+								{
+									"name": "VersionID",
+									"type": "String",
+									"value": {
+										"value": "@variables('VersionBuild')",
+										"type": "Expression"
+									},
+									"direction": "Input"
+								},
+								{
+									"name": "PackageName",
+									"type": "String",
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"direction": "Input"
+								},
+								{
+									"name": "StepName",
+									"type": "String",
+									"value": "Log Job Start",
+									"direction": "Input"
+								}
+							],
+							"type": "NonQuery",
+							"text": "exec SSIS.LogJobStart @DataSourceID, @VersionID, @PackageName, @StepName"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "If Is Active",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Log Job Start",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@activity('Get DataSource Info').output.resultSets[0].rows[0].IsActive",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "ETL Disabled",
+							"type": "Script",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "GFMDRRS_DB__ETLManager",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"parameters": [
+											{
+												"name": "DataSourceID",
+												"type": "Guid",
+												"value": {
+													"value": "@activity('Get DataSource Info').output.resultSets[0].rows[0].DataSourceID",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "VersionID",
+												"type": "String",
+												"value": {
+													"value": "@variables('VersionBuild')",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "PackageName",
+												"type": "String",
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "StepName",
+												"type": "String",
+												"value": "ETL Disabled",
+												"direction": "Input"
+											}
+										],
+										"type": "NonQuery",
+										"text": "exec SSIS.LogETLDisabled @DataSourceID, @VersionID, @PackageName, @StepName"
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "AFIT Training",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"policy": {
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "AFIT_ETL_Training_Main",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"DataSourceAbbrev": {
+				"type": "string",
+				"defaultValue": "AFIT Main ETL"
+			}
+		},
+		"variables": {
+			"VersionBuild": {
+				"type": "Integer",
+				"defaultValue": 1
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-03-08T06:12:02Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

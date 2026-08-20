@@ -1,0 +1,17 @@
+{
+	"name": "GFMDRRS_DB__AFIT_ETL",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "r9-trial-free-azure-db.database.windows.net",
+			"database": "r9TrialFreeAzureDb",
+			"encrypt": "mandatory",
+			"trustServerCertificate": false,
+			"authenticationType": "SQL",
+			"userName": "r9user",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQEUwMUI0RDI2LTRFMzctNDY2RS1CRDkxLUU0QTRGMzk2OTlCN18zNjljNzA1Zi1kNTE1LTQzNzItOGQ4NS1kODY4ZjUyNDgwYzQiDQp9"
+		}
+	}
+}

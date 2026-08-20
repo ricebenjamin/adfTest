@@ -1,0 +1,46 @@
+{
+	"name": "SSIS Test",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute SSIS package1",
+				"type": "ExecuteSSISPackage",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"packageLocation": {
+						"packagePath": "riceTest/Integration Services Project1/Willie.dtsx",
+						"type": "SSISDB"
+					},
+					"environmentPath": null,
+					"connectVia": {
+						"referenceName": "r9-trial-ssis-ir",
+						"type": "IntegrationRuntimeReference"
+					},
+					"loggingLevel": "Basic",
+					"projectParameters": {
+						"R9TrialFreeAzureDbDatabaseWindowsNetR9TrialFreeAzureDbR9user1_ConnectionString": {
+							"value": "Data Source=r9-trial-free-azure-db.database.windows.net;User ID=r9user;Initial Catalog=r9TrialFreeAzureDb;Provider=SQLOLEDB.1;Persist Security Info=True;Auto Translate=False;Application Name=Krampus;"
+						},
+						"R9TrialFreeAzureDbDatabaseWindowsNetR9TrialFreeAzureDbR9user1_Password": {
+							"value": {
+								"type": "SecureString",
+								"value": "**********"
+							}
+						}
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-03-24T23:28:53Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,15 @@
+{
+	"name": "r9TrialDataFactory",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "0f754b9b-397b-4c04-ba7f-4d1a7463348a",
+		"tenantId": "722666aa-692d-4c09-b8ff-22da59caeec5"
+	}
+}

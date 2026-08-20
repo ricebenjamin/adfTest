@@ -1,0 +1,403 @@
+{
+	"name": "AFIT_ETL_Training_ARIS",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get DataSource Info",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "GFMDRRS_DB__ETLManager",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"parameters": [
+								{
+									"name": "DatasrouceAbbrev",
+									"type": "String",
+									"value": {
+										"value": "@pipeline().parameters.DataSourceAbbrev",
+										"type": "Expression"
+									},
+									"direction": "Input"
+								}
+							],
+							"type": "Query",
+							"text": "exec SSIS.GetDataSourceInfo @DatasrouceAbbrev"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Log Job Start",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Get DataSource Info",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "GFMDRRS_DB__ETLManager",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"parameters": [
+								{
+									"name": "DataSourceID",
+									"type": "Guid",
+									"value": {
+										"value": "@activity('Get DataSource Info').output.resultSets[0].rows[0].DataSourceID",
+										"type": "Expression"
+									},
+									"direction": "Input"
+								},
+								{
+									"name": "VersionID",
+									"type": "String",
+									"value": {
+										"value": "@variables('VersionBuild')",
+										"type": "Expression"
+									},
+									"direction": "Input"
+								},
+								{
+									"name": "PackageName",
+									"type": "String",
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"direction": "Input"
+								},
+								{
+									"name": "StepName",
+									"type": "String",
+									"value": "Log Job Start",
+									"direction": "Input"
+								}
+							],
+							"type": "NonQuery",
+							"text": "exec SSIS.LogJobStart @DataSourceID, @VersionID, @PackageName, @StepName"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "If Is Active",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Log Job Start",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@activity('Get DataSource Info').output.resultSets[0].rows[0].IsActive",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "ETL Disabled",
+							"type": "Script",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "GFMDRRS_DB__ETLManager",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"parameters": [
+											{
+												"name": "DataSourceID",
+												"type": "Guid",
+												"value": {
+													"value": "@activity('Get DataSource Info').output.resultSets[0].rows[0].DataSourceID",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "VersionID",
+												"type": "String",
+												"value": {
+													"value": "@variables('VersionBuild')",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "PackageName",
+												"type": "String",
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "StepName",
+												"type": "String",
+												"value": "ETL Disabled",
+												"direction": "Input"
+											}
+										],
+										"type": "NonQuery",
+										"text": "exec SSIS.LogETLDisabled @DataSourceID, @VersionID, @PackageName, @StepName"
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						},
+						{
+							"name": "Exit on ETL Disabled",
+							"type": "Fail",
+							"dependsOn": [
+								{
+									"activity": "ETL Disabled",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"message": "ARIS Training Disabled",
+								"errorCode": "0"
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "Get ADS File Metadata",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "DelimitedText1",
+									"type": "DatasetReference"
+								},
+								"fieldList": [
+									"exists"
+								],
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Does ADS File Exist",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "If Is Active",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@activity('Get ADS File Metadata').output.exists",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "File NOT Exists_copy1_copy1",
+							"type": "Script",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "GFMDRRS_DB__ETLManager",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"parameters": [
+											{
+												"name": "DataSourceID",
+												"type": "Guid",
+												"value": {
+													"value": "@activity('Get DataSource Info').output.resultSets[0].rows[0].DataSourceID",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "VersionID",
+												"type": "String",
+												"value": {
+													"value": "@variables('VersionBuild')",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "PackageName",
+												"type": "String",
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "StepName",
+												"type": "String",
+												"value": "FIle NOT Exists",
+												"direction": "Input"
+											}
+										],
+										"type": "NonQuery",
+										"text": "exec SSIS.LogETLDisabled @DataSourceID, @VersionID, @PackageName, @StepName"
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "File Exists_copy1_copy1",
+							"type": "Script",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"linkedServiceName": {
+								"referenceName": "GFMDRRS_DB__ETLManager",
+								"type": "LinkedServiceReference"
+							},
+							"typeProperties": {
+								"scripts": [
+									{
+										"parameters": [
+											{
+												"name": "DataSourceID",
+												"type": "Guid",
+												"value": {
+													"value": "@activity('Get DataSource Info').output.resultSets[0].rows[0].DataSourceID",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "VersionID",
+												"type": "String",
+												"value": {
+													"value": "@variables('VersionBuild')",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "PackageName",
+												"type": "String",
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"direction": "Input"
+											},
+											{
+												"name": "StepName",
+												"type": "String",
+												"value": "TODO 1",
+												"direction": "Input"
+											}
+										],
+										"type": "NonQuery",
+										"text": "exec SSIS.LogETLDisabled @DataSourceID, @VersionID, @PackageName, @StepName"
+									}
+								],
+								"scriptBlockExecutionTimeout": "02:00:00"
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"DataSourceAbbrev": {
+				"type": "string",
+				"defaultValue": "ARIS Training"
+			}
+		},
+		"variables": {
+			"VersionBuild": {
+				"type": "Integer",
+				"defaultValue": 1
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-03-08T06:22:16Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
