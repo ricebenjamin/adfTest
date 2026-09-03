@@ -2526,7 +2526,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Every 10mins 2 Attempts')]",
+			"name": "[concat(parameters('factoryName'), '/10M 2F')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -2543,7 +2543,7 @@
 				"typeProperties": {
 					"frequency": "Minute",
 					"interval": 10,
-					"startTime": "2026-09-03T03:49:00Z",
+					"startTime": "2026-09-03T04:03:00Z",
 					"delay": "00:00:00",
 					"maxConcurrency": 50,
 					"retryPolicy": {
