@@ -1,0 +1,34 @@
+{
+	"name": "Email_Test",
+	"properties": {
+		"activities": [
+			{
+				"name": "Send Email",
+				"type": "AzureFunctionActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": "SendEmail",
+					"body": {
+						"To": "rice.benjamin@gmail.com",
+						"Subject": "From Pipeline",
+						"Body": "This email was cleanly dispatched via Azure Functions!"
+					},
+					"method": "POST"
+				},
+				"linkedServiceName": {
+					"referenceName": "Email Linked Service",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": []
+	}
+}
