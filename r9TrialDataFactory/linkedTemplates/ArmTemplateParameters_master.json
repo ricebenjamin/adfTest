@@ -1,0 +1,93 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "r9TrialDataFactory"
+		},
+		"AzureBlobStorage1_connectionString": {
+			"value": ""
+		},
+		"AzurePostgreSql1_password": {
+			"value": ""
+		},
+		"AzureSqlDatabase1_password": {
+			"value": ""
+		},
+		"Email Linked Service_functionKey": {
+			"value": ""
+		},
+		"GFMDRRS_DB__AFIT_password": {
+			"value": ""
+		},
+		"GFMDRRS_DB__AFIT_ETL_password": {
+			"value": ""
+		},
+		"GFMDRRS_DB__ETLManager_password": {
+			"value": ""
+		},
+		"AzurePostgreSql1_properties_typeProperties_server": {
+			"value": "r9-trial-postgres-db.postgres.database.azure.com"
+		},
+		"AzurePostgreSql1_properties_typeProperties_database": {
+			"value": "postgres"
+		},
+		"AzurePostgreSql1_properties_typeProperties_username": {
+			"value": "r9admin"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"value": "r9-trial-free-azure-db.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"value": "r9TrialFreeAzureDb"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"value": "r9user"
+		},
+		"Email Linked Service_properties_typeProperties_functionAppUrl": {
+			"value": "https://emailfuncapp-fzhgbuabd5dtc6ft.westus3-01.azurewebsites.net"
+		},
+		"GFMDRRS_DB__AFIT_properties_typeProperties_server": {
+			"value": "r9-trial-free-azure-db.database.windows.net"
+		},
+		"GFMDRRS_DB__AFIT_properties_typeProperties_database": {
+			"value": "r9TrialFreeAzureDb"
+		},
+		"GFMDRRS_DB__AFIT_properties_typeProperties_userName": {
+			"value": "r9user"
+		},
+		"GFMDRRS_DB__AFIT_ETL_properties_typeProperties_server": {
+			"value": "r9-trial-free-azure-db.database.windows.net"
+		},
+		"GFMDRRS_DB__AFIT_ETL_properties_typeProperties_database": {
+			"value": "r9TrialFreeAzureDb"
+		},
+		"GFMDRRS_DB__AFIT_ETL_properties_typeProperties_userName": {
+			"value": "r9user"
+		},
+		"GFMDRRS_DB__ETLManager_properties_typeProperties_server": {
+			"value": "r9-trial-free-azure-db.database.windows.net"
+		},
+		"GFMDRRS_DB__ETLManager_properties_typeProperties_database": {
+			"value": "r9TrialFreeAzureDb"
+		},
+		"GFMDRRS_DB__ETLManager_properties_typeProperties_userName": {
+			"value": "r9user"
+		},
+		"r9-trial-ssis-ir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+			"value": "r9-trial-free-azure-db.database.windows.net"
+		},
+		"r9-trial-ssis-ir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+			"value": "CloudSAe0d670c9"
+		},
+		"r9-trial-ssis-ir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+			"value": ""
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

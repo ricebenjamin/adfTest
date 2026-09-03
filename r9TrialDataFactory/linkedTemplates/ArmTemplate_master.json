@@ -1,0 +1,223 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "r9TrialDataFactory"
+		},
+		"AzureBlobStorage1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
+		},
+		"AzurePostgreSql1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'AzurePostgreSql1'"
+		},
+		"AzureSqlDatabase1_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'AzureSqlDatabase1'"
+		},
+		"Email Linked Service_functionKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'functionKey' of 'Email Linked Service'"
+		},
+		"GFMDRRS_DB__AFIT_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'GFMDRRS_DB__AFIT'"
+		},
+		"GFMDRRS_DB__AFIT_ETL_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'GFMDRRS_DB__AFIT_ETL'"
+		},
+		"GFMDRRS_DB__ETLManager_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'GFMDRRS_DB__ETLManager'"
+		},
+		"AzurePostgreSql1_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "r9-trial-postgres-db.postgres.database.azure.com"
+		},
+		"AzurePostgreSql1_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "postgres"
+		},
+		"AzurePostgreSql1_properties_typeProperties_username": {
+			"type": "string",
+			"defaultValue": "r9admin"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "r9-trial-free-azure-db.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "r9TrialFreeAzureDb"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "r9user"
+		},
+		"Email Linked Service_properties_typeProperties_functionAppUrl": {
+			"type": "string",
+			"defaultValue": "https://emailfuncapp-fzhgbuabd5dtc6ft.westus3-01.azurewebsites.net"
+		},
+		"GFMDRRS_DB__AFIT_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "r9-trial-free-azure-db.database.windows.net"
+		},
+		"GFMDRRS_DB__AFIT_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "r9TrialFreeAzureDb"
+		},
+		"GFMDRRS_DB__AFIT_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "r9user"
+		},
+		"GFMDRRS_DB__AFIT_ETL_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "r9-trial-free-azure-db.database.windows.net"
+		},
+		"GFMDRRS_DB__AFIT_ETL_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "r9TrialFreeAzureDb"
+		},
+		"GFMDRRS_DB__AFIT_ETL_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "r9user"
+		},
+		"GFMDRRS_DB__ETLManager_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "r9-trial-free-azure-db.database.windows.net"
+		},
+		"GFMDRRS_DB__ETLManager_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "r9TrialFreeAzureDb"
+		},
+		"GFMDRRS_DB__ETLManager_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "r9user"
+		},
+		"r9-trial-ssis-ir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+			"type": "string",
+			"defaultValue": "r9-trial-free-azure-db.database.windows.net"
+		},
+		"r9-trial-ssis-ir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+			"type": "string",
+			"defaultValue": "CloudSAe0d670c9"
+		},
+		"r9-trial-ssis-ir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+			"type": "secureString"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "r9TrialDataFactory_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureBlobStorage1_connectionString": {
+						"value": "[parameters('AzureBlobStorage1_connectionString')]"
+					},
+					"AzurePostgreSql1_password": {
+						"value": "[parameters('AzurePostgreSql1_password')]"
+					},
+					"AzureSqlDatabase1_password": {
+						"value": "[parameters('AzureSqlDatabase1_password')]"
+					},
+					"Email Linked Service_functionKey": {
+						"value": "[parameters('Email Linked Service_functionKey')]"
+					},
+					"GFMDRRS_DB__AFIT_password": {
+						"value": "[parameters('GFMDRRS_DB__AFIT_password')]"
+					},
+					"GFMDRRS_DB__AFIT_ETL_password": {
+						"value": "[parameters('GFMDRRS_DB__AFIT_ETL_password')]"
+					},
+					"GFMDRRS_DB__ETLManager_password": {
+						"value": "[parameters('GFMDRRS_DB__ETLManager_password')]"
+					},
+					"AzurePostgreSql1_properties_typeProperties_server": {
+						"value": "[parameters('AzurePostgreSql1_properties_typeProperties_server')]"
+					},
+					"AzurePostgreSql1_properties_typeProperties_database": {
+						"value": "[parameters('AzurePostgreSql1_properties_typeProperties_database')]"
+					},
+					"AzurePostgreSql1_properties_typeProperties_username": {
+						"value": "[parameters('AzurePostgreSql1_properties_typeProperties_username')]"
+					},
+					"AzureSqlDatabase1_properties_typeProperties_server": {
+						"value": "[parameters('AzureSqlDatabase1_properties_typeProperties_server')]"
+					},
+					"AzureSqlDatabase1_properties_typeProperties_database": {
+						"value": "[parameters('AzureSqlDatabase1_properties_typeProperties_database')]"
+					},
+					"AzureSqlDatabase1_properties_typeProperties_userName": {
+						"value": "[parameters('AzureSqlDatabase1_properties_typeProperties_userName')]"
+					},
+					"Email Linked Service_properties_typeProperties_functionAppUrl": {
+						"value": "[parameters('Email Linked Service_properties_typeProperties_functionAppUrl')]"
+					},
+					"GFMDRRS_DB__AFIT_properties_typeProperties_server": {
+						"value": "[parameters('GFMDRRS_DB__AFIT_properties_typeProperties_server')]"
+					},
+					"GFMDRRS_DB__AFIT_properties_typeProperties_database": {
+						"value": "[parameters('GFMDRRS_DB__AFIT_properties_typeProperties_database')]"
+					},
+					"GFMDRRS_DB__AFIT_properties_typeProperties_userName": {
+						"value": "[parameters('GFMDRRS_DB__AFIT_properties_typeProperties_userName')]"
+					},
+					"GFMDRRS_DB__AFIT_ETL_properties_typeProperties_server": {
+						"value": "[parameters('GFMDRRS_DB__AFIT_ETL_properties_typeProperties_server')]"
+					},
+					"GFMDRRS_DB__AFIT_ETL_properties_typeProperties_database": {
+						"value": "[parameters('GFMDRRS_DB__AFIT_ETL_properties_typeProperties_database')]"
+					},
+					"GFMDRRS_DB__AFIT_ETL_properties_typeProperties_userName": {
+						"value": "[parameters('GFMDRRS_DB__AFIT_ETL_properties_typeProperties_userName')]"
+					},
+					"GFMDRRS_DB__ETLManager_properties_typeProperties_server": {
+						"value": "[parameters('GFMDRRS_DB__ETLManager_properties_typeProperties_server')]"
+					},
+					"GFMDRRS_DB__ETLManager_properties_typeProperties_database": {
+						"value": "[parameters('GFMDRRS_DB__ETLManager_properties_typeProperties_database')]"
+					},
+					"GFMDRRS_DB__ETLManager_properties_typeProperties_userName": {
+						"value": "[parameters('GFMDRRS_DB__ETLManager_properties_typeProperties_userName')]"
+					},
+					"r9-trial-ssis-ir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
+						"value": "[parameters('r9-trial-ssis-ir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint')]"
+					},
+					"r9-trial-ssis-ir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName": {
+						"value": "[parameters('r9-trial-ssis-ir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminUserName')]"
+					},
+					"r9-trial-ssis-ir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
+						"value": "[parameters('r9-trial-ssis-ir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
