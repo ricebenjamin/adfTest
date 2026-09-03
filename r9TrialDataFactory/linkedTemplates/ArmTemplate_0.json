@@ -116,30 +116,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/Fail Test')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Fail1",
-						"type": "Fail",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"message": "Pipeline Failed",
-							"errorCode": "4001"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/AzureBlobStorage1')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -1441,6 +1417,182 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/GFMDRRS_DB__ETLManager')]",
 				"[concat(variables('factoryId'), '/datasets/DelimitedText1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Fail Test')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Untill Successful or Max Tries",
+						"type": "Until",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@or(variables('Success'), greaterOrEquals(variables('Try Counter'),variables('Max Tries') ))",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Fail1",
+									"type": "Fail",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"message": "Pipeline Failed",
+										"errorCode": "4001"
+									}
+								},
+								{
+									"name": "Set Successful",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "Fail1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "Success",
+										"value": true
+									}
+								},
+								{
+									"name": "Increment Try Counter Temp",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "Fail1",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "Try Counter Temp",
+										"value": {
+											"value": "@add(variables('Try Counter'), 1)",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Increment Try Counter",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "Increment Try Counter Temp",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "Try Counter",
+										"value": {
+											"value": "@variables('Try Counter Temp')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"timeout": "0.12:00:00"
+						}
+					},
+					{
+						"name": "Email Success",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Untill Successful or Max Tries",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Email_Test",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "Email Failure",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Untill Successful or Max Tries",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Email_Test",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"Success": {
+						"type": "Boolean",
+						"defaultValue": false
+					},
+					"Try Counter": {
+						"type": "Integer",
+						"defaultValue": 0
+					},
+					"Try Counter Temp": {
+						"type": "Integer",
+						"defaultValue": 0
+					},
+					"Max Tries": {
+						"type": "Integer",
+						"defaultValue": 3
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Email_Test')]"
 			]
 		},
 		{
