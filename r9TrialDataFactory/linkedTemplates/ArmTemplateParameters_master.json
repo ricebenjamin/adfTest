@@ -35,6 +35,12 @@
 		"AzurePostgreSql1_properties_typeProperties_username": {
 			"value": "r9admin"
 		},
+		"AzurePostgreSqlEntraID_properties_typeProperties_server": {
+			"value": "r9-trial-postgres-db.postgres.database.azure.com"
+		},
+		"AzurePostgreSqlEntraID_properties_typeProperties_database": {
+			"value": "postgres"
+		},
 		"AzureSqlDatabase1_properties_typeProperties_server": {
 			"value": "r9-trial-free-azure-db.database.windows.net"
 		},

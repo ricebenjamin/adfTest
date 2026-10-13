@@ -47,6 +47,14 @@
 			"type": "string",
 			"defaultValue": "r9admin"
 		},
+		"AzurePostgreSqlEntraID_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "r9-trial-postgres-db.postgres.database.azure.com"
+		},
+		"AzurePostgreSqlEntraID_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "postgres"
+		},
 		"AzureSqlDatabase1_properties_typeProperties_server": {
 			"type": "string",
 			"defaultValue": "r9-trial-free-azure-db.database.windows.net"
@@ -214,10 +222,36 @@
 					},
 					"r9-trial-ssis-ir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword": {
 						"value": "[parameters('r9-trial-ssis-ir_properties_typeProperties_ssisProperties_catalogInfo_catalogAdminPassword')]"
+					},
+					"AzurePostgreSqlEntraID_properties_typeProperties_server": {
+						"value": "[parameters('AzurePostgreSqlEntraID_properties_typeProperties_server')]"
+					},
+					"AzurePostgreSqlEntraID_properties_typeProperties_database": {
+						"value": "[parameters('AzurePostgreSqlEntraID_properties_typeProperties_database')]"
 					}
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "r9TrialDataFactory_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'r9TrialDataFactory_ArmTemplate_0')]"
+			]
 		}
 	]
 }
