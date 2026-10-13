@@ -1,0 +1,19 @@
+{
+	"name": "AzurePostgreSqlEntraID",
+	"properties": {
+		"annotations": [],
+		"type": "AzurePostgreSql",
+		"version": "2.0",
+		"typeProperties": {
+			"server": "r9-trial-postgres-db.postgres.database.azure.com",
+			"port": "5432",
+			"database": "postgres",
+			"sslMode": 2,
+			"authenticationType": "UserAssignedManagedIdentity",
+			"credential": {
+				"referenceName": "id-adf-dev-eastus-001",
+				"type": "CredentialReference"
+			}
+		}
+	}
+}
