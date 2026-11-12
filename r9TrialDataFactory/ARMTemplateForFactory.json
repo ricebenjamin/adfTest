@@ -107,6 +107,14 @@
 			"type": "string",
 			"defaultValue": "r9user"
 		},
+		"RestService1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.loganalytics.azure.com/v1/workspaces/10d970c8-ef56-43e5-8fc6-5cb932057b44/query"
+		},
+		"RestService1_properties_typeProperties_aadResourceId": {
+			"type": "string",
+			"defaultValue": "https://management.azure.com/"
+		},
 		"r9-trial-ssis-ir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 			"type": "string",
 			"defaultValue": "r9-trial-free-azure-db.database.windows.net"
@@ -1288,9 +1296,16 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Simple Test",
+						"name": "Persist Metrics",
 						"type": "Script",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Get Metrics via REST",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -1306,11 +1321,80 @@
 						"typeProperties": {
 							"scripts": [
 								{
+									"parameters": [
+										{
+											"name": "dataFromMetrics",
+											"type": "String",
+											"value": {
+												"value": "@activity('Get Metrics via REST').output.tables[0].name",
+												"type": "Expression"
+											},
+											"direction": "Input"
+										}
+									],
 									"type": "NonQuery",
-									"text": "insert into gaobi_edw.test (col_a) values ('entra success');"
+									"text": "insert into gaobi_edw.test (col_a) values (@dataFromMetrics);"
 								}
 							],
 							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Get Metrics via REST",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {},
+							"url": "https://api.loganalytics.azure.com/v1/workspaces/10d970c8-ef56-43e5-8fc6-5cb932057b44/query",
+							"body": {
+								"query": "ADFActivityRun"
+							},
+							"authentication": {
+								"resource": "https://api.loganalytics.io",
+								"credential": {
+									"referenceName": "id-adf-dev-eastus-001",
+									"type": "CredentialReference"
+								},
+								"type": "UserAssignedManagedIdentity"
+							}
+						}
+					},
+					{
+						"name": "Get Metrics via REST_copy1",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {},
+							"url": "https://api.loganalytics.azure.com/v1/workspaces/10d970c8-ef56-43e5-8fc6-5cb932057b44/query",
+							"body": {
+								"query": "ADFActivityRun"
+							},
+							"authentication": {
+								"resource": "https://api.loganalytics.io",
+								"credential": {
+									"referenceName": "id-adf-dev-eastus-001",
+									"type": "CredentialReference"
+								},
+								"type": "UserAssignedManagedIdentity"
+							}
 						}
 					}
 				],
@@ -1320,7 +1404,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzurePostgreSqlEntraID')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzurePostgreSqlEntraID')]",
+				"[concat(variables('factoryId'), '/credentials/id-adf-dev-eastus-001')]"
 			]
 		},
 		{
@@ -1332,7 +1417,14 @@
 					{
 						"name": "Copy Accomplish",
 						"type": "Copy",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Web1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -1920,6 +2012,35 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "Web1",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {},
+							"url": "https://api.loganalytics.azure.com/v1/workspaces/10d970c8-ef56-43e5-8fc6-5cb932057b44/query",
+							"body": {
+								"query": "ADFActivityRun"
+							},
+							"authentication": {
+								"resource": "https://api.loganalytics.io",
+								"credential": {
+									"referenceName": "id-adf-dev-eastus-001",
+									"type": "CredentialReference"
+								},
+								"type": "UserAssignedManagedIdentity"
+							}
+						}
 					}
 				],
 				"policy": {
@@ -1930,7 +2051,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Accomplish_Source')]",
-				"[concat(variables('factoryId'), '/datasets/Accomplish_Target')]"
+				"[concat(variables('factoryId'), '/datasets/Accomplish_Target')]",
+				"[concat(variables('factoryId'), '/credentials/id-adf-dev-eastus-001')]"
 			]
 		},
 		{
@@ -2719,6 +2841,28 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RestService1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('RestService1_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "ManagedServiceIdentity",
+					"aadResourceId": "[parameters('RestService1_properties_typeProperties_aadResourceId')]",
+					"credential": {
+						"referenceName": "id-adf-dev-eastus-001",
+						"type": "CredentialReference"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/credentials/id-adf-dev-eastus-001')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/r9-trial-ssis-ir')]",

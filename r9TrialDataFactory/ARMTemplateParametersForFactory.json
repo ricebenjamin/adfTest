@@ -80,6 +80,12 @@
 		"GFMDRRS_DB__ETLManager_properties_typeProperties_userName": {
 			"value": "r9user"
 		},
+		"RestService1_properties_typeProperties_url": {
+			"value": "https://api.loganalytics.azure.com/v1/workspaces/10d970c8-ef56-43e5-8fc6-5cb932057b44/query"
+		},
+		"RestService1_properties_typeProperties_aadResourceId": {
+			"value": "https://management.azure.com/"
+		},
 		"r9-trial-ssis-ir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 			"value": "r9-trial-free-azure-db.database.windows.net"
 		},

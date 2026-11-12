@@ -107,6 +107,14 @@
 			"type": "string",
 			"defaultValue": "r9user"
 		},
+		"RestService1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.loganalytics.azure.com/v1/workspaces/10d970c8-ef56-43e5-8fc6-5cb932057b44/query"
+		},
+		"RestService1_properties_typeProperties_aadResourceId": {
+			"type": "string",
+			"defaultValue": "https://management.azure.com/"
+		},
 		"r9-trial-ssis-ir_properties_typeProperties_ssisProperties_catalogInfo_catalogServerEndpoint": {
 			"type": "string",
 			"defaultValue": "r9-trial-free-azure-db.database.windows.net"
@@ -228,6 +236,12 @@
 					},
 					"AzurePostgreSqlEntraID_properties_typeProperties_database": {
 						"value": "[parameters('AzurePostgreSqlEntraID_properties_typeProperties_database')]"
+					},
+					"RestService1_properties_typeProperties_url": {
+						"value": "[parameters('RestService1_properties_typeProperties_url')]"
+					},
+					"RestService1_properties_typeProperties_aadResourceId": {
+						"value": "[parameters('RestService1_properties_typeProperties_aadResourceId')]"
 					}
 				}
 			},

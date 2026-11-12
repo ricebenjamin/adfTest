@@ -117,6 +117,14 @@
 		"AzurePostgreSqlEntraID_properties_typeProperties_database": {
 			"type": "string",
 			"defaultValue": "postgres"
+		},
+		"RestService1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.loganalytics.azure.com/v1/workspaces/10d970c8-ef56-43e5-8fc6-5cb932057b44/query"
+		},
+		"RestService1_properties_typeProperties_aadResourceId": {
+			"type": "string",
+			"defaultValue": "https://management.azure.com/"
 		}
 	},
 	"variables": {
@@ -1052,6 +1060,28 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/RestService1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('RestService1_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "ManagedServiceIdentity",
+					"aadResourceId": "[parameters('RestService1_properties_typeProperties_aadResourceId')]",
+					"credential": {
+						"referenceName": "id-adf-dev-eastus-001",
+						"type": "CredentialReference"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/credentials/id-adf-dev-eastus-001')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AFIT_ETL_Training_ARIS')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1646,9 +1676,16 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Simple Test",
+						"name": "Persist Metrics",
 						"type": "Script",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Get Metrics via REST",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -1664,11 +1701,80 @@
 						"typeProperties": {
 							"scripts": [
 								{
+									"parameters": [
+										{
+											"name": "dataFromMetrics",
+											"type": "String",
+											"value": {
+												"value": "@activity('Get Metrics via REST').output.tables[0].name",
+												"type": "Expression"
+											},
+											"direction": "Input"
+										}
+									],
 									"type": "NonQuery",
-									"text": "insert into gaobi_edw.test (col_a) values ('entra success');"
+									"text": "insert into gaobi_edw.test (col_a) values (@dataFromMetrics);"
 								}
 							],
 							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Get Metrics via REST",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {},
+							"url": "https://api.loganalytics.azure.com/v1/workspaces/10d970c8-ef56-43e5-8fc6-5cb932057b44/query",
+							"body": {
+								"query": "ADFActivityRun"
+							},
+							"authentication": {
+								"resource": "https://api.loganalytics.io",
+								"credential": {
+									"referenceName": "id-adf-dev-eastus-001",
+									"type": "CredentialReference"
+								},
+								"type": "UserAssignedManagedIdentity"
+							}
+						}
+					},
+					{
+						"name": "Get Metrics via REST_copy1",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {},
+							"url": "https://api.loganalytics.azure.com/v1/workspaces/10d970c8-ef56-43e5-8fc6-5cb932057b44/query",
+							"body": {
+								"query": "ADFActivityRun"
+							},
+							"authentication": {
+								"resource": "https://api.loganalytics.io",
+								"credential": {
+									"referenceName": "id-adf-dev-eastus-001",
+									"type": "CredentialReference"
+								},
+								"type": "UserAssignedManagedIdentity"
+							}
 						}
 					}
 				],
@@ -1678,7 +1784,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzurePostgreSqlEntraID')]"
+				"[concat(variables('factoryId'), '/linkedServices/AzurePostgreSqlEntraID')]",
+				"[concat(variables('factoryId'), '/credentials/id-adf-dev-eastus-001')]"
 			]
 		},
 		{
@@ -1690,7 +1797,14 @@
 					{
 						"name": "Copy Accomplish",
 						"type": "Copy",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Web1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -2278,6 +2392,35 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "Web1",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {},
+							"url": "https://api.loganalytics.azure.com/v1/workspaces/10d970c8-ef56-43e5-8fc6-5cb932057b44/query",
+							"body": {
+								"query": "ADFActivityRun"
+							},
+							"authentication": {
+								"resource": "https://api.loganalytics.io",
+								"credential": {
+									"referenceName": "id-adf-dev-eastus-001",
+									"type": "CredentialReference"
+								},
+								"type": "UserAssignedManagedIdentity"
+							}
+						}
 					}
 				],
 				"policy": {
@@ -2288,243 +2431,8 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Accomplish_Source')]",
-				"[concat(variables('factoryId'), '/datasets/Accomplish_Target')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AFIT_ETL_Training_Main')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Get DataSource Info",
-						"type": "Script",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"linkedServiceName": {
-							"referenceName": "GFMDRRS_DB__ETLManager",
-							"type": "LinkedServiceReference"
-						},
-						"typeProperties": {
-							"scripts": [
-								{
-									"parameters": [
-										{
-											"name": "DatasrouceAbbrev",
-											"type": "String",
-											"value": {
-												"value": "@pipeline().parameters.DataSourceAbbrev",
-												"type": "Expression"
-											},
-											"direction": "Input"
-										}
-									],
-									"type": "Query",
-									"text": "exec SSIS.GetDataSourceInfo @DatasrouceAbbrev"
-								}
-							],
-							"scriptBlockExecutionTimeout": "02:00:00"
-						}
-					},
-					{
-						"name": "Log Job Start",
-						"type": "Script",
-						"dependsOn": [
-							{
-								"activity": "Get DataSource Info",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"linkedServiceName": {
-							"referenceName": "GFMDRRS_DB__ETLManager",
-							"type": "LinkedServiceReference"
-						},
-						"typeProperties": {
-							"scripts": [
-								{
-									"parameters": [
-										{
-											"name": "DataSourceID",
-											"type": "Guid",
-											"value": {
-												"value": "@activity('Get DataSource Info').output.resultSets[0].rows[0].DataSourceID",
-												"type": "Expression"
-											},
-											"direction": "Input"
-										},
-										{
-											"name": "VersionID",
-											"type": "String",
-											"value": {
-												"value": "@variables('VersionBuild')",
-												"type": "Expression"
-											},
-											"direction": "Input"
-										},
-										{
-											"name": "PackageName",
-											"type": "String",
-											"value": {
-												"value": "@pipeline().Pipeline",
-												"type": "Expression"
-											},
-											"direction": "Input"
-										},
-										{
-											"name": "StepName",
-											"type": "String",
-											"value": "Log Job Start",
-											"direction": "Input"
-										}
-									],
-									"type": "NonQuery",
-									"text": "exec SSIS.LogJobStart @DataSourceID, @VersionID, @PackageName, @StepName"
-								}
-							],
-							"scriptBlockExecutionTimeout": "02:00:00"
-						}
-					},
-					{
-						"name": "If Is Active",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "Log Job Start",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@activity('Get DataSource Info').output.resultSets[0].rows[0].IsActive",
-								"type": "Expression"
-							},
-							"ifFalseActivities": [
-								{
-									"name": "ETL Disabled",
-									"type": "Script",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"linkedServiceName": {
-										"referenceName": "GFMDRRS_DB__ETLManager",
-										"type": "LinkedServiceReference"
-									},
-									"typeProperties": {
-										"scripts": [
-											{
-												"parameters": [
-													{
-														"name": "DataSourceID",
-														"type": "Guid",
-														"value": {
-															"value": "@activity('Get DataSource Info').output.resultSets[0].rows[0].DataSourceID",
-															"type": "Expression"
-														},
-														"direction": "Input"
-													},
-													{
-														"name": "VersionID",
-														"type": "String",
-														"value": {
-															"value": "@variables('VersionBuild')",
-															"type": "Expression"
-														},
-														"direction": "Input"
-													},
-													{
-														"name": "PackageName",
-														"type": "String",
-														"value": {
-															"value": "@pipeline().Pipeline",
-															"type": "Expression"
-														},
-														"direction": "Input"
-													},
-													{
-														"name": "StepName",
-														"type": "String",
-														"value": "ETL Disabled",
-														"direction": "Input"
-													}
-												],
-												"type": "NonQuery",
-												"text": "exec SSIS.LogETLDisabled @DataSourceID, @VersionID, @PackageName, @StepName"
-											}
-										],
-										"scriptBlockExecutionTimeout": "02:00:00"
-									}
-								}
-							],
-							"ifTrueActivities": [
-								{
-									"name": "ARIS Training",
-									"type": "ExecutePipeline",
-									"dependsOn": [],
-									"policy": {
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"pipeline": {
-											"referenceName": "AFIT_ETL_Training_ARIS",
-											"type": "PipelineReference"
-										},
-										"waitOnCompletion": true,
-										"parameters": {}
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"parameters": {
-					"DataSourceAbbrev": {
-						"type": "string",
-						"defaultValue": "AFIT Training ETL"
-					}
-				},
-				"variables": {
-					"VersionBuild": {
-						"type": "Integer",
-						"defaultValue": 1
-					}
-				},
-				"annotations": [],
-				"lastPublishTime": "2026-03-08T06:12:02Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/GFMDRRS_DB__ETLManager')]",
-				"[concat(variables('factoryId'), '/pipelines/AFIT_ETL_Training_ARIS')]"
+				"[concat(variables('factoryId'), '/datasets/Accomplish_Target')]",
+				"[concat(variables('factoryId'), '/credentials/id-adf-dev-eastus-001')]"
 			]
 		}
 	]
