@@ -1,0 +1,17 @@
+{
+	"name": "RestService1",
+	"properties": {
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "https://api.loganalytics.azure.com/v1/workspaces/10d970c8-ef56-43e5-8fc6-5cb932057b44/query",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "ManagedServiceIdentity",
+			"aadResourceId": "https://management.azure.com/",
+			"credential": {
+				"referenceName": "id-adf-dev-eastus-001",
+				"type": "CredentialReference"
+			}
+		}
+	}
+}
