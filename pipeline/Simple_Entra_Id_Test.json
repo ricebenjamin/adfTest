@@ -3,9 +3,16 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Simple Test",
+				"name": "Persist Metrics",
 				"type": "Script",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Get Metrics via REST",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -21,11 +28,50 @@
 				"typeProperties": {
 					"scripts": [
 						{
+							"parameters": [
+								{
+									"name": "dataFromMetrics",
+									"type": "String",
+									"value": {
+										"value": "@activity('Get Metrics via REST').output.tables[0].name",
+										"type": "Expression"
+									},
+									"direction": "Input"
+								}
+							],
 							"type": "NonQuery",
-							"text": "insert into gaobi_edw.test (col_a) values ('entra success');"
+							"text": "insert into gaobi_edw.test (col_a) values (@dataFromMetrics);"
 						}
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Get Metrics via REST",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"url": "https://api.loganalytics.azure.com/v1/workspaces/10d970c8-ef56-43e5-8fc6-5cb932057b44/query",
+					"body": {
+						"query": "ADFActivityRun"
+					},
+					"authentication": {
+						"resource": "https://api.loganalytics.io",
+						"credential": {
+							"referenceName": "id-adf-dev-eastus-001",
+							"type": "CredentialReference"
+						},
+						"type": "UserAssignedManagedIdentity"
+					}
 				}
 			}
 		],
