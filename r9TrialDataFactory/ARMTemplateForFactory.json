@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1'"
 		},
+		"AzureFunction1_functionKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'functionKey' of 'AzureFunction1'"
+		},
 		"AzurePostgreSql1_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'AzurePostgreSql1'"
@@ -34,6 +38,10 @@
 		"GFMDRRS_DB__ETLManager_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'GFMDRRS_DB__ETLManager'"
+		},
+		"AzureFunction1_properties_typeProperties_functionAppUrl": {
+			"type": "string",
+			"defaultValue": "https://emailfuncapp-fzhgbuabd5dtc6ft.westus3-01.azurewebsites.net"
 		},
 		"AzurePostgreSql1_properties_typeProperties_server": {
 			"type": "string",
@@ -1367,35 +1375,6 @@
 								"type": "UserAssignedManagedIdentity"
 							}
 						}
-					},
-					{
-						"name": "Get Metrics via REST_copy1",
-						"type": "WebActivity",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"method": "POST",
-							"headers": {},
-							"url": "https://api.loganalytics.azure.com/v1/workspaces/10d970c8-ef56-43e5-8fc6-5cb932057b44/query",
-							"body": {
-								"query": "ADFActivityRun"
-							},
-							"authentication": {
-								"resource": "https://api.loganalytics.io",
-								"credential": {
-									"referenceName": "id-adf-dev-eastus-001",
-									"type": "CredentialReference"
-								},
-								"type": "UserAssignedManagedIdentity"
-							}
-						}
 					}
 				],
 				"policy": {
@@ -1407,6 +1386,29 @@
 				"[concat(variables('factoryId'), '/linkedServices/AzurePostgreSqlEntraID')]",
 				"[concat(variables('factoryId'), '/credentials/id-adf-dev-eastus-001')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/do nothing')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Wait1",
+						"type": "Wait",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
@@ -2685,6 +2687,25 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('AzureBlobStorage1_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureFunction1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureFunction",
+				"typeProperties": {
+					"functionAppUrl": "[parameters('AzureFunction1_properties_typeProperties_functionAppUrl')]",
+					"authentication": "MSI",
+					"resourceId": "de57dbc6-1bec-4e25-bea2-ecdfc1562cd6",
+					"functionKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureFunction1_functionKey')]"
+					}
 				}
 			},
 			"dependsOn": []

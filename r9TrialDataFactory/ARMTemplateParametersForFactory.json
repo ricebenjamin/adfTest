@@ -8,6 +8,9 @@
 		"AzureBlobStorage1_connectionString": {
 			"value": ""
 		},
+		"AzureFunction1_functionKey": {
+			"value": ""
+		},
 		"AzurePostgreSql1_password": {
 			"value": ""
 		},
@@ -25,6 +28,9 @@
 		},
 		"GFMDRRS_DB__ETLManager_password": {
 			"value": ""
+		},
+		"AzureFunction1_properties_typeProperties_functionAppUrl": {
+			"value": "https://emailfuncapp-fzhgbuabd5dtc6ft.westus3-01.azurewebsites.net"
 		},
 		"AzurePostgreSql1_properties_typeProperties_server": {
 			"value": "r9-trial-postgres-db.postgres.database.azure.com"
