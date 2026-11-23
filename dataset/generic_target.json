@@ -2,7 +2,7 @@
 	"name": "generic_target",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzurePostgreSql1",
+			"referenceName": "AzurePostgreSqlEntraID",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
