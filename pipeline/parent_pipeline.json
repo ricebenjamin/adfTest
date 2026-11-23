@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Execute Pipeline1",
+				"name": "P1 Calling C1",
 				"type": "ExecutePipeline",
 				"dependsOn": [],
 				"policy": {
@@ -25,11 +25,11 @@
 				}
 			},
 			{
-				"name": "Execute Pipeline2",
+				"name": "P1 Calling C2",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "Execute Pipeline1",
+						"activity": "P1 Calling C1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -58,7 +58,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "Execute Pipeline2",
+						"activity": "P1 Calling C2",
 						"dependencyConditions": [
 							"Succeeded"
 						]

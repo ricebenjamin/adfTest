@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "C2 Copy",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -72,11 +72,11 @@
 				]
 			},
 			{
-				"name": "Execute Pipeline1",
+				"name": "C2 Calling C3",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "Copy data1",
+						"activity": "C2 Copy",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -93,7 +93,10 @@
 					},
 					"waitOnCompletion": true,
 					"parameters": {
-						"glue": "@coalesce(pipeline().parameters.glue, pipeline().RunId)"
+						"glue": {
+							"value": "@coalesce(pipeline().parameters.glue, pipeline().RunId)",
+							"type": "Expression"
+						}
 					}
 				}
 			}
