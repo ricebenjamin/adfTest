@@ -46,9 +46,88 @@
 					},
 					"waitOnCompletion": true,
 					"parameters": {
-						"glue": "@coalesce(pipeline().parameters.glue, pipeline().RunId)"
+						"glue": {
+							"value": "@coalesce(pipeline().parameters.glue, pipeline().RunId)",
+							"type": "Expression"
+						}
 					}
 				}
+			},
+			{
+				"name": "Copy in Parent",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Execute Pipeline2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzurePostgreSqlSource",
+						"partitionOption": "None",
+						"queryTimeout": "02:00:00"
+					},
+					"sink": {
+						"type": "AzurePostgreSqlSink",
+						"writeBatchSize": 1000000,
+						"writeBatchTimeout": "00:30:00",
+						"writeMethod": "CopyCommand"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "col_a",
+									"type": "String",
+									"physicalType": "text"
+								},
+								"sink": {
+									"name": "col_a",
+									"type": "String",
+									"physicalType": "text"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "generic_source",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema": "gaobi_edw",
+							"table": "test"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "generic_target",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema": "gaobi_edw",
+							"table": "test_2"
+						}
+					}
+				]
 			}
 		],
 		"parameters": {
