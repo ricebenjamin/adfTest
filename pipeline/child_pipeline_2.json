@@ -91,10 +91,19 @@
 						"referenceName": "child_pipeline_3",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"glue": "@coalesce(pipeline().parameters.glue, pipeline().RunId)"
+					}
 				}
 			}
 		],
+		"parameters": {
+			"glue": {
+				"type": "string",
+				"defaultValue": "TODO"
+			}
+		},
 		"annotations": []
 	}
 }

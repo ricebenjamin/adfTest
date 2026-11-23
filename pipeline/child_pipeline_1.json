@@ -72,6 +72,11 @@
 				]
 			}
 		],
+		"parameters": {
+			"glue": {
+				"type": "string"
+			}
+		},
 		"annotations": []
 	}
 }
