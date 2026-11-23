@@ -1466,6 +1466,11 @@
 				"policy": {
 					"elapsedTimeMetric": {}
 				},
+				"parameters": {
+					"glue": {
+						"type": "string"
+					}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -1569,12 +1574,23 @@
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
-							"parameters": {}
+							"parameters": {
+								"glue": {
+									"value": "@coalesce(pipeline().parameters.glue, pipeline().RunId)",
+									"type": "Expression"
+								}
+							}
 						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"glue": {
+						"type": "string",
+						"defaultValue": "TODO"
+					}
 				},
 				"annotations": []
 			},
@@ -1663,6 +1679,12 @@
 				"policy": {
 					"elapsedTimeMetric": {}
 				},
+				"parameters": {
+					"glue": {
+						"type": "string",
+						"defaultValue": "TODO"
+					}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -1713,7 +1735,12 @@
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
-							"parameters": {}
+							"parameters": {
+								"glue": {
+									"value": "@coalesce(pipeline().parameters.glue, pipeline().RunId)",
+									"type": "Expression"
+								}
+							}
 						}
 					},
 					{
@@ -1737,7 +1764,12 @@
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
-							"parameters": {}
+							"parameters": {
+								"glue": {
+									"value": "@coalesce(pipeline().parameters.glue, pipeline().RunId)",
+									"type": "Expression"
+								}
+							}
 						}
 					}
 				],
