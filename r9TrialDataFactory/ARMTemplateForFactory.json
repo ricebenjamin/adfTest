@@ -1394,7 +1394,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy data1",
+						"name": "C1 Copy",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -1485,7 +1485,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy data1",
+						"name": "C2 Copy",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -1554,11 +1554,11 @@
 						]
 					},
 					{
-						"name": "Execute Pipeline1",
+						"name": "C2 Calling C3",
 						"type": "ExecutePipeline",
 						"dependsOn": [
 							{
-								"activity": "Copy data1",
+								"activity": "C2 Copy",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1607,7 +1607,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy data1",
+						"name": "C3 Copy",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -1722,7 +1722,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Execute Pipeline1",
+						"name": "P1 Calling C1",
 						"type": "ExecutePipeline",
 						"dependsOn": [],
 						"policy": {
@@ -1744,11 +1744,11 @@
 						}
 					},
 					{
-						"name": "Execute Pipeline2",
+						"name": "P1 Calling C2",
 						"type": "ExecutePipeline",
 						"dependsOn": [
 							{
-								"activity": "Execute Pipeline1",
+								"activity": "P1 Calling C1",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1777,7 +1777,7 @@
 						"type": "Copy",
 						"dependsOn": [
 							{
-								"activity": "Execute Pipeline2",
+								"activity": "P1 Calling C2",
 								"dependencyConditions": [
 									"Succeeded"
 								]
