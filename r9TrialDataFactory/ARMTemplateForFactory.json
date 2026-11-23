@@ -1744,6 +1744,11 @@
 				"policy": {
 					"elapsedTimeMetric": {}
 				},
+				"parameters": {
+					"glue": {
+						"type": "string"
+					}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
