@@ -1086,6 +1086,76 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/generic_source')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzurePostgreSql1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"schema": {
+						"type": "string"
+					},
+					"table": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzurePostgreSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzurePostgreSql1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/generic_target')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzurePostgreSql1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"schema": {
+						"type": "string"
+					},
+					"table": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzurePostgreSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().schema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzurePostgreSql1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzurePostgreSqlEntraID')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -1129,594 +1199,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/credentials/id-adf-dev-eastus-001')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AFIT_ETL_Training_ARIS')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Get DataSource Info",
-						"type": "Script",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"linkedServiceName": {
-							"referenceName": "GFMDRRS_DB__ETLManager",
-							"type": "LinkedServiceReference"
-						},
-						"typeProperties": {
-							"scripts": [
-								{
-									"parameters": [
-										{
-											"name": "DatasrouceAbbrev",
-											"type": "String",
-											"value": {
-												"value": "@pipeline().parameters.DataSourceAbbrev",
-												"type": "Expression"
-											},
-											"direction": "Input"
-										}
-									],
-									"type": "Query",
-									"text": "exec SSIS.GetDataSourceInfo @DatasrouceAbbrev"
-								}
-							],
-							"scriptBlockExecutionTimeout": "02:00:00"
-						}
-					},
-					{
-						"name": "Log Job Start",
-						"type": "Script",
-						"dependsOn": [
-							{
-								"activity": "Get DataSource Info",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"linkedServiceName": {
-							"referenceName": "GFMDRRS_DB__ETLManager",
-							"type": "LinkedServiceReference"
-						},
-						"typeProperties": {
-							"scripts": [
-								{
-									"parameters": [
-										{
-											"name": "DataSourceID",
-											"type": "Guid",
-											"value": {
-												"value": "@activity('Get DataSource Info').output.resultSets[0].rows[0].DataSourceID",
-												"type": "Expression"
-											},
-											"direction": "Input"
-										},
-										{
-											"name": "VersionID",
-											"type": "String",
-											"value": {
-												"value": "@variables('VersionBuild')",
-												"type": "Expression"
-											},
-											"direction": "Input"
-										},
-										{
-											"name": "PackageName",
-											"type": "String",
-											"value": {
-												"value": "@pipeline().Pipeline",
-												"type": "Expression"
-											},
-											"direction": "Input"
-										},
-										{
-											"name": "StepName",
-											"type": "String",
-											"value": "Log Job Start",
-											"direction": "Input"
-										}
-									],
-									"type": "NonQuery",
-									"text": "exec SSIS.LogJobStart @DataSourceID, @VersionID, @PackageName, @StepName"
-								}
-							],
-							"scriptBlockExecutionTimeout": "02:00:00"
-						}
-					},
-					{
-						"name": "If Is Active",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "Log Job Start",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@activity('Get DataSource Info').output.resultSets[0].rows[0].IsActive",
-								"type": "Expression"
-							},
-							"ifFalseActivities": [
-								{
-									"name": "ETL Disabled",
-									"type": "Script",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"linkedServiceName": {
-										"referenceName": "GFMDRRS_DB__ETLManager",
-										"type": "LinkedServiceReference"
-									},
-									"typeProperties": {
-										"scripts": [
-											{
-												"parameters": [
-													{
-														"name": "DataSourceID",
-														"type": "Guid",
-														"value": {
-															"value": "@activity('Get DataSource Info').output.resultSets[0].rows[0].DataSourceID",
-															"type": "Expression"
-														},
-														"direction": "Input"
-													},
-													{
-														"name": "VersionID",
-														"type": "String",
-														"value": {
-															"value": "@variables('VersionBuild')",
-															"type": "Expression"
-														},
-														"direction": "Input"
-													},
-													{
-														"name": "PackageName",
-														"type": "String",
-														"value": {
-															"value": "@pipeline().Pipeline",
-															"type": "Expression"
-														},
-														"direction": "Input"
-													},
-													{
-														"name": "StepName",
-														"type": "String",
-														"value": "ETL Disabled",
-														"direction": "Input"
-													}
-												],
-												"type": "NonQuery",
-												"text": "exec SSIS.LogETLDisabled @DataSourceID, @VersionID, @PackageName, @StepName"
-											}
-										],
-										"scriptBlockExecutionTimeout": "02:00:00"
-									}
-								},
-								{
-									"name": "Exit on ETL Disabled",
-									"type": "Fail",
-									"dependsOn": [
-										{
-											"activity": "ETL Disabled",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"userProperties": [],
-									"typeProperties": {
-										"message": "ARIS Training Disabled",
-										"errorCode": "0"
-									}
-								}
-							],
-							"ifTrueActivities": [
-								{
-									"name": "Get ADS File Metadata",
-									"type": "GetMetadata",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"dataset": {
-											"referenceName": "DelimitedText1",
-											"type": "DatasetReference",
-											"parameters": {}
-										},
-										"fieldList": [
-											"exists"
-										],
-										"storeSettings": {
-											"type": "AzureBlobStorageReadSettings",
-											"recursive": true,
-											"enablePartitionDiscovery": false
-										},
-										"formatSettings": {
-											"type": "DelimitedTextReadSettings"
-										}
-									}
-								}
-							]
-						}
-					},
-					{
-						"name": "Does ADS File Exist",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "If Is Active",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@activity('Get ADS File Metadata').output.exists",
-								"type": "Expression"
-							},
-							"ifFalseActivities": [
-								{
-									"name": "File NOT Exists_copy1_copy1",
-									"type": "Script",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"linkedServiceName": {
-										"referenceName": "GFMDRRS_DB__ETLManager",
-										"type": "LinkedServiceReference"
-									},
-									"typeProperties": {
-										"scripts": [
-											{
-												"parameters": [
-													{
-														"name": "DataSourceID",
-														"type": "Guid",
-														"value": {
-															"value": "@activity('Get DataSource Info').output.resultSets[0].rows[0].DataSourceID",
-															"type": "Expression"
-														},
-														"direction": "Input"
-													},
-													{
-														"name": "VersionID",
-														"type": "String",
-														"value": {
-															"value": "@variables('VersionBuild')",
-															"type": "Expression"
-														},
-														"direction": "Input"
-													},
-													{
-														"name": "PackageName",
-														"type": "String",
-														"value": {
-															"value": "@pipeline().Pipeline",
-															"type": "Expression"
-														},
-														"direction": "Input"
-													},
-													{
-														"name": "StepName",
-														"type": "String",
-														"value": "FIle NOT Exists",
-														"direction": "Input"
-													}
-												],
-												"type": "NonQuery",
-												"text": "exec SSIS.LogETLDisabled @DataSourceID, @VersionID, @PackageName, @StepName"
-											}
-										],
-										"scriptBlockExecutionTimeout": "02:00:00"
-									}
-								}
-							],
-							"ifTrueActivities": [
-								{
-									"name": "File Exists_copy1_copy1",
-									"type": "Script",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"linkedServiceName": {
-										"referenceName": "GFMDRRS_DB__ETLManager",
-										"type": "LinkedServiceReference"
-									},
-									"typeProperties": {
-										"scripts": [
-											{
-												"parameters": [
-													{
-														"name": "DataSourceID",
-														"type": "Guid",
-														"value": {
-															"value": "@activity('Get DataSource Info').output.resultSets[0].rows[0].DataSourceID",
-															"type": "Expression"
-														},
-														"direction": "Input"
-													},
-													{
-														"name": "VersionID",
-														"type": "String",
-														"value": {
-															"value": "@variables('VersionBuild')",
-															"type": "Expression"
-														},
-														"direction": "Input"
-													},
-													{
-														"name": "PackageName",
-														"type": "String",
-														"value": {
-															"value": "@pipeline().Pipeline",
-															"type": "Expression"
-														},
-														"direction": "Input"
-													},
-													{
-														"name": "StepName",
-														"type": "String",
-														"value": "TODO 1",
-														"direction": "Input"
-													}
-												],
-												"type": "NonQuery",
-												"text": "exec SSIS.LogETLDisabled @DataSourceID, @VersionID, @PackageName, @StepName"
-											}
-										],
-										"scriptBlockExecutionTimeout": "02:00:00"
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"parameters": {
-					"DataSourceAbbrev": {
-						"type": "string",
-						"defaultValue": "ARIS Training"
-					}
-				},
-				"variables": {
-					"VersionBuild": {
-						"type": "Integer",
-						"defaultValue": 1
-					}
-				},
-				"annotations": [],
-				"lastPublishTime": "2026-03-08T06:22:16Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/GFMDRRS_DB__ETLManager')]",
-				"[concat(variables('factoryId'), '/datasets/DelimitedText1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Fail Test')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Untill Successful or Max Tries",
-						"type": "Until",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@or(variables('Success'), greaterOrEquals(variables('Try Counter'),variables('Max Tries') ))",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "Fail1",
-									"type": "Fail",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"message": "Pipeline Failed",
-										"errorCode": "4001"
-									}
-								},
-								{
-									"name": "Set Successful",
-									"type": "SetVariable",
-									"dependsOn": [
-										{
-											"activity": "Fail1",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "Success",
-										"value": true
-									}
-								},
-								{
-									"name": "Increment Try Counter Temp",
-									"type": "SetVariable",
-									"dependsOn": [
-										{
-											"activity": "Fail1",
-											"dependencyConditions": [
-												"Failed"
-											]
-										}
-									],
-									"policy": {
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "Try Counter Temp",
-										"value": {
-											"value": "@add(variables('Try Counter'), 1)",
-											"type": "Expression"
-										}
-									}
-								},
-								{
-									"name": "Increment Try Counter",
-									"type": "SetVariable",
-									"dependsOn": [
-										{
-											"activity": "Increment Try Counter Temp",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"variableName": "Try Counter",
-										"value": {
-											"value": "@variables('Try Counter Temp')",
-											"type": "Expression"
-										}
-									}
-								}
-							],
-							"timeout": "0.12:00:00"
-						}
-					},
-					{
-						"name": "Email Success",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "Untill Successful or Max Tries",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "Email_Test",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "Email Failure",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "Untill Successful or Max Tries",
-								"dependencyConditions": [
-									"Failed"
-								]
-							}
-						],
-						"policy": {
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "Email_Test",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"variables": {
-					"Success": {
-						"type": "Boolean",
-						"defaultValue": false
-					},
-					"Try Counter": {
-						"type": "Integer",
-						"defaultValue": 0
-					},
-					"Try Counter Temp": {
-						"type": "Integer",
-						"defaultValue": 0
-					},
-					"Max Tries": {
-						"type": "Integer",
-						"defaultValue": 3
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/Email_Test')]"
 			]
 		}
 	]
