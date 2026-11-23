@@ -1,0 +1,17 @@
+{
+	"name": "Every 15 mins",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 15,
+				"startTime": "2026-11-23T20:19:00",
+				"timeZone": "Central Standard Time"
+			}
+		}
+	}
+}
