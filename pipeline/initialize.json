@@ -1,0 +1,24 @@
+{
+	"name": "initialize",
+	"properties": {
+		"parameters": {
+			"pipelineName": {
+				"type": "string",
+				"defaultValue": "Not Set"
+			},
+			"businessName": {
+				"type": "string",
+				"defaultValue": "Not Set"
+			},
+			"glue": {
+				"type": "string",
+				"defaultValue": "Not Set"
+			},
+			"triggerName": {
+				"type": "string",
+				"defaultValue": "Not Set"
+			}
+		},
+		"annotations": []
+	}
+}

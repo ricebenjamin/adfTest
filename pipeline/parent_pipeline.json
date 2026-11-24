@@ -7,7 +7,7 @@
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "Set variable1",
+						"activity": "Initialize",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -137,19 +137,30 @@
 				]
 			},
 			{
-				"name": "Set variable1",
-				"type": "SetVariable",
+				"name": "Initialize",
+				"type": "ExecutePipeline",
 				"dependsOn": [],
 				"policy": {
-					"secureOutput": false,
 					"secureInput": false
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "triggerName",
-					"value": {
-						"value": "@pipeline().TriggerName",
-						"type": "Expression"
+					"pipeline": {
+						"referenceName": "initialize",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						},
+						"businessName": "Hero Pipeline",
+						"glue": "@coalesce(pipeline().parameters.glue, pipeline().RunId)",
+						"triggerName": {
+							"value": "@pipeline().TriggerName",
+							"type": "Expression"
+						}
 					}
 				}
 			}
