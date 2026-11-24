@@ -5,7 +5,14 @@
 			{
 				"name": "P1 Calling C1",
 				"type": "ExecutePipeline",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"secureInput": false
 				},
@@ -128,11 +135,33 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "triggerName",
+					"value": {
+						"value": "@pipeline().TriggerName",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
 			"glue": {
 				"type": "string"
+			}
+		},
+		"variables": {
+			"triggerName": {
+				"type": "String"
 			}
 		},
 		"annotations": []
