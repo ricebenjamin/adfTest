@@ -3,12 +3,71 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Wait1",
-				"type": "Wait",
+				"name": "setPipelineName",
+				"type": "SetVariable",
 				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
 				"userProperties": [],
 				"typeProperties": {
-					"waitTimeInSeconds": 1
+					"variableName": "pipelineName",
+					"value": {
+						"value": "@pipeline().parameters.pipelineName",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "setBusinessName",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "businessName",
+					"value": {
+						"value": "@pipeline().parameters.businessName",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "setGlue",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "glue",
+					"value": {
+						"value": "@pipeline().parameters.glue",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "setTriggerName",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "triggerName",
+					"value": {
+						"value": "@pipeline().parameters.triggerName",
+						"type": "Expression"
+					}
 				}
 			}
 		],
@@ -28,6 +87,20 @@
 			"triggerName": {
 				"type": "string",
 				"defaultValue": "Not Set"
+			}
+		},
+		"variables": {
+			"pipelineName": {
+				"type": "String"
+			},
+			"businessName": {
+				"type": "String"
+			},
+			"glue": {
+				"type": "String"
+			},
+			"triggerName": {
+				"type": "String"
 			}
 		},
 		"annotations": []
