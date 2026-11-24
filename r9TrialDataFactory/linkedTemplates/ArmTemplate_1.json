@@ -2017,7 +2017,7 @@
 						"type": "ExecutePipeline",
 						"dependsOn": [
 							{
-								"activity": "Initialize",
+								"activity": "Initialize ACT",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -2147,7 +2147,7 @@
 						]
 					},
 					{
-						"name": "Initialize",
+						"name": "Initialize ACT",
 						"type": "ExecutePipeline",
 						"dependsOn": [],
 						"policy": {
@@ -2156,7 +2156,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "initialize",
+								"referenceName": "initialize_pipe",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,

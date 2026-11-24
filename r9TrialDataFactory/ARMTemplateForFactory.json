@@ -1967,7 +1967,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/initialize')]",
+			"name": "[concat(parameters('factoryName'), '/initialize_pipe')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -2018,7 +2018,7 @@
 						"type": "ExecutePipeline",
 						"dependsOn": [
 							{
-								"activity": "Initialize",
+								"activity": "Initialize ACT",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -2148,7 +2148,7 @@
 						]
 					},
 					{
-						"name": "Initialize",
+						"name": "Initialize ACT",
 						"type": "ExecutePipeline",
 						"dependsOn": [],
 						"policy": {
@@ -2157,7 +2157,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "initialize",
+								"referenceName": "initialize_pipe",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -2199,7 +2199,7 @@
 				"[concat(variables('factoryId'), '/pipelines/child_pipeline_2')]",
 				"[concat(variables('factoryId'), '/datasets/generic_source')]",
 				"[concat(variables('factoryId'), '/datasets/generic_target')]",
-				"[concat(variables('factoryId'), '/pipelines/initialize')]"
+				"[concat(variables('factoryId'), '/pipelines/initialize_pipe')]"
 			]
 		},
 		{
